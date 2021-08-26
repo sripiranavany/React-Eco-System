@@ -7,7 +7,10 @@ export const todos = (state = initialState, action) => {
     switch (type) {
         case CREATE_TODO:
             const { todo } = payload;
-            return { ...state, data: state.data.concat(todo.todo) };
+            return {
+                ...state,
+                data: state.data.concat(todo.todo)
+            };
 
         case REMOVE_TODO:
             let { todo: todoRemoveTodo } = payload;
