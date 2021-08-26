@@ -1,45 +1,36 @@
 import { CREATE_TODO, REMOVE_TODO, MARK_TODO_AS_COMPLETED, LOAD_TODO_FAILURE, LOAD_TODO_PROGRESS, LOAD_TODO_SUCCESS } from './actions';
 
-export const isLoading = (state = false, action) => {
-    const { type } = action;
-    switch (type) {
-        case LOAD_TODO_PROGRESS:
-            return false;
-        case LOAD_TODO_SUCCESS:
-        case LOAD_TODO_FAILURE:
-            return false;
+const initialState = { isLoading: false, data: [] };
 
-        default:
-            return state;
-    }
-};
-
-export const todos = (state = [], action) => {
+export const todos = (state = initialState, action) => {
     const { type, payload } = action;
     switch (type) {
         case CREATE_TODO:
             const { todo } = payload;
-            return state.concat(todo.todo);
+            return { ...state, data: state.data.concat(todo.todo) };
 
         case REMOVE_TODO:
             let { todo: todoRemoveTodo } = payload;
-            return state.filter(todo => todo.id !== todoRemoveTodo.id);
+            return { ...state, data: state.data.filter(todo => todo.id !== todoRemoveTodo.id) };
 
         case MARK_TODO_AS_COMPLETED:
             let { todo: updatedTodo } = payload;
-            return state.map(todo => {
-                if (todo.id === updatedTodo.id) {
-                    return updatedTodo;
-                }
-                return todo;
-            });
+            return {
+                ...state, data: state.data.map(todo => {
+                    if (todo.id === updatedTodo.id) {
+                        return updatedTodo;
+                    }
+                    return todo;
+                })
+            };
 
         case LOAD_TODO_SUCCESS:
             const { todos } = payload;
-            return todos.todos;
-
+            return { ...state, isLoading: false, data: todos.todos };
         case LOAD_TODO_PROGRESS:
+            return { ...state, isLoading: true };
         case LOAD_TODO_FAILURE:
+            return { ...state, isLoading: false };
 
         default:
             return state;
